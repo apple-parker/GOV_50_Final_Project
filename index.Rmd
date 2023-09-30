@@ -1,7 +1,7 @@
 ---
 title: "Gov 50 Final Project"
-author: "Your Name Here"
-description: "My final project"
+author: "Adelaide Parker"
+description: "My GOV 50 final project"
 output:
   distill::distill_article:
     self_contained: false
@@ -11,4 +11,4 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring data related to...
+I am interested in election analytics and data journalism. Last fall, I took a journalism class where I reported on Utah's 2022 Senate race. I think it would be interesting to analyze this same election using the quantitative data analysis methods we are learning in GOV 50. I'd like to see what new insights I gain when approaching this election from a quantitative vs. a qualitative point of view.
