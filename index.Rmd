@@ -15,4 +15,42 @@ I am interested in election analytics and data journalism. Last fall, I took a j
 
 
 ## Data Source and Research Question
-How did the absence of a Democratic candidate in Utah's 2022 Senate elections impact Democrats' performances in local Utah races? I hypothesize that it increased Democratic success in local races, because the absence of a Democrat in the 2022 Senate elections (Republican Senator Mike Lee's opponent was instead Independent Evan McMullin) resulted in a much more competitive race than is typical for Utah, attracting greater-than-average media attention and boosting democratic turnout. I will look into this by comparing the success of Utah democrats in local races in 2022, compared with past elections (data from: https://vote.utah.gov/historical-election-results/). I may also compare Utah democrats' success in 2022 to the success of other local Democrats in similarly red states in 2022, to solve for confounding variables that may be specific to that year. My explanatory variable of interest is the presence of a Democrat in each election cycle's highest-profile race (so presidential races in national eleciton years, and Senate races in non-national eleciton years). I will measure the presence of a Democrat as "1", and the absence of a Democrat as "0". My outcome variable of interest is Democrats' performances in local Utah races, measured by the proportion of votes that Democrats recieve within each race. I will try and aggregate this to a statewide level, so I can compare Democratic success in 2022 vs. in prior years. An observed pattern of increased support for local Democrats in 2022 would support my hypothesis; a lack of increased support for local Democrats in 2022 would disprove my hypothesis.
+
+How did the absence of a Democratic candidate in Utah's 2022 Senate elections impact Democrats' performances in local Utah races? I hypothesize that it increased Democratic success in local races, because the absence of a Democrat in the 2022 Senate elections (Republican Senator Mike Lee's opponent was instead Independent Evan McMullin) resulted in a much more competitive race than is typical for Utah, attracting greater-than-average media attention and boosting democratic turnout. I will look into this by comparing the success of Utah democrats in local races in 2022, compared with past elections (data from: https://vote.utah.gov/historical-election-results/). I may also compare Utah democrats' success in 2022 to the success of other local Democrats in similarly red states in 2022, to solve for confounding variables that may be specific to that year. My explanatory variable of interest is the presence of a Democrat in each election cycle's highest-profile race (so presidential races in national election years, and Senate races in non-national election years). I will measure the presence of a Democrat as "1", and the absence of a Democrat as "0". My outcome variable of interest is Democrats' performances in local Utah races, measured by the proportion of votes that Democrats recieve within each race. I will try and aggregate this to a statewide level, so I can compare Democratic success in 2022 vs. in prior years. An observed pattern of increased support for local Democrats in 2022 would support my hypothesis; a lack of increased support for local Democrats in 2022 would disprove my hypothesis.
+
+
+## Data Visualization
+
+I loaded in a dataset showing votes in Utah's 2022 election, and created a graph that compares the number of votes that candidates Mike Lee (R) and Evan McMullin (I) received in each county. Because the population of Utah's counties varies a lot, I used a logarithmic scale on the y-axis so this data is easier to interpret. I also color-coded the candidates' bars in my graph (red for Lee because he is a Republican, and yellow for McMullin because he is an Independent).
+
+```{r}
+# Load CSV
+senate_data <- read_csv("senate_2022.csv")
+
+# Load packages
+library(tidyverse)
+library(dplyr)
+
+# Filter the data for Utah
+utah_data <- senate_data |>
+  filter(state_po == "UT")
+
+# Create a dataset that only shows votes for Lee and McMullin
+lee_mcmullin <- utah_data |>
+  filter(candidate == "EVAN MCMULLIN" | candidate == "MIKE LEE")
+
+lee_mcmullin
+
+# Graphing votes for Mike Lee and Evan McMullin by county
+ggplot(lee_mcmullin, aes(x = county_name, y = candidatevotes, fill = candidate)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_log10() +
+  scale_fill_manual(values = c("MIKE LEE" = "lightcoral", "EVAN MCMULLIN" = "gold")) +
+  theme_minimal() +
+  labs(title = "Votes by County for Mike Lee and Evan McMullin (Log Scale)",
+       x = "County",
+       y = "Number of Votes (log scale)",
+       fill = "Candidate") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
