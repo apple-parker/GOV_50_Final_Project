@@ -39,15 +39,13 @@ utah_data <- senate_data |>
 lee_mcmullin <- utah_data |>
   filter(candidate == "EVAN MCMULLIN" | candidate == "MIKE LEE")
 
-lee_mcmullin
-
 # Graphing votes for Mike Lee and Evan McMullin by county
 ggplot(lee_mcmullin, aes(x = county_name, y = candidatevotes, fill = candidate)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_y_log10() +
   scale_fill_manual(values = c("MIKE LEE" = "lightcoral", "EVAN MCMULLIN" = "gold")) +
   theme_minimal() +
-  labs(title = "Votes by County for Mike Lee and Evan McMullin (Log Scale)",
+  labs(title = "Votes by County for Mike Lee and Evan McMullin",
        x = "County",
        y = "Number of Votes (log scale)",
        fill = "Candidate") +
