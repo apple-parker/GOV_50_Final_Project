@@ -22,12 +22,12 @@ How did the absence of a Democratic candidate in Utah's 2022 Senate elections im
 I loaded in a dataset showing votes in Utah's 2022 election, and created a graph that compares the number of votes that candidates Mike Lee (R) and Evan McMullin (I) received in each county. Because the population of Utah's counties varies a lot, I used a logarithmic scale on the y-axis so this data is easier to interpret. I also color-coded the candidates' bars in my graph (red for Lee because he is a Republican, and yellow for McMullin because he is an Independent).
 
 ```{r}
-# Load CSV
-senate_data <- read_csv("senate_2022.csv")
-
 # Load packages
 library(tidyverse)
 library(dplyr)
+
+# Load CSV
+senate_data <- read_csv("senate_2022.csv")
 
 # Filter the data for Utah
 utah_data <- senate_data |>
