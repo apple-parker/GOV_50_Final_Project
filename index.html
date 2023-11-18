@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","senate_2022.csv"]}
+  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","senate_2022.csv"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1554,6 +1554,50 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 <p><img src="index_files/figure-html5/unnamed-chunk-1-1.png" width="624" /></p>
 </div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'># Load packages</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'># Load CSV</span></span>
+<span><span class='va'>senate_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"senate_2022.csv"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'># Filter the data for Utah</span></span>
+<span><span class='va'>utah_data</span> <span class='op'>&lt;-</span> <span class='va'>senate_data</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>state_po</span> <span class='op'>==</span> <span class='st'>"UT"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'># Create a dataset that only shows votes for Lee and McMullin</span></span>
+<span><span class='va'>lee_mcmullin</span> <span class='op'>&lt;-</span> <span class='va'>utah_data</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>candidate</span> <span class='op'>==</span> <span class='st'>"EVAN MCMULLIN"</span> <span class='op'>|</span> <span class='va'>candidate</span> <span class='op'>==</span> <span class='st'>"MIKE LEE"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'># Calculate the percentage of votes for McMullin in each county</span></span>
+<span><span class='va'>mcmullin_percentage</span> <span class='op'>&lt;-</span> <span class='va'>lee_mcmullin</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>county_name</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>total_votes <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>candidatevotes</span><span class='op'>)</span>,</span>
+<span>            mcmullin_votes <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>candidatevotes</span><span class='op'>[</span><span class='va'>candidate</span> <span class='op'>==</span> <span class='st'>"EVAN MCMULLIN"</span><span class='op'>]</span><span class='op'>)</span>,</span>
+<span>            percent_mcmullin <span class='op'>=</span> <span class='va'>mcmullin_votes</span> <span class='op'>/</span> <span class='va'>total_votes</span> <span class='op'>*</span> <span class='fl'>100</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>percent_mcmullin</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'># Join the percentage data with the original dataset</span></span>
+<span><span class='va'>lee_mcmullin_percent</span> <span class='op'>&lt;-</span> <span class='va'>lee_mcmullin</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='op'>(</span><span class='va'>mcmullin_percentage</span>, by <span class='op'>=</span> <span class='st'>"county_name"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'># Graphing votes for Mike Lee and Evan McMullin by county, ordered by McMullin's vote percentage</span></span>
+<span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>lee_mcmullin_percent</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/reorder.factor.html'>reorder</a></span><span class='op'>(</span><span class='va'>county_name</span>, <span class='op'>-</span><span class='va'>percent_mcmullin</span><span class='op'>)</span>, y <span class='op'>=</span> <span class='va'>candidatevotes</span>, fill <span class='op'>=</span> <span class='va'>candidate</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_bar</a></span><span class='op'>(</span>stat <span class='op'>=</span> <span class='st'>"identity"</span>, position <span class='op'>=</span> <span class='st'>"dodge"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_log10</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_manual.html'>scale_fill_manual</a></span><span class='op'>(</span>values <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MIKE LEE"</span> <span class='op'>=</span> <span class='st'>"lightcoral"</span>, <span class='st'>"EVAN MCMULLIN"</span> <span class='op'>=</span> <span class='st'>"gold"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_minimal</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Votes by County for Mike Lee and Evan McMullin (Ordered by McMullin's Support)"</span>,</span>
+<span>       x <span class='op'>=</span> <span class='st'>"County"</span>,</span>
+<span>       y <span class='op'>=</span> <span class='st'>"Number of Votes (log scale)"</span>,</span>
+<span>       fill <span class='op'>=</span> <span class='st'>"Candidate"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>axis.text.x <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_text</a></span><span class='op'>(</span>angle <span class='op'>=</span> <span class='fl'>45</span>, hjust <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+</div>
+<p>This graph shows support for Mike Lee and Evan McMullin in each Utah county. Unlike the last graph, I’ve ranked the counties in this graph by their % support for Evan McMullin. The counties that support McMullin the most are on the left, and those that support Lee the most are on the right. I am planning on using this graph as my baseline for independent (McMullin) and Republican (Lee) support in Utah by county, which I will compare to the results of down-ballot elections in each county.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
