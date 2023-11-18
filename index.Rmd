@@ -91,3 +91,5 @@ ggplot(lee_mcmullin_percent, aes(x = reorder(county_name, -percent_mcmullin), y 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 This graph shows support for Mike Lee and Evan McMullin in each Utah county. Unlike the last graph, I've ranked the counties in this graph by their % support for Evan McMullin. The counties that support McMullin the most are on the left, and those that support Lee the most are on the right. I am planning on using this graph as my baseline for independent (McMullin) and Republican (Lee) support in Utah by county, which I will compare to the results of down-ballot elections in each county.
+
+The counties to the left of this plot tend to be more urban, while the counties to the right of this plot tend to be less urban (for example, Salt Lake County is #2 on the chart and is the most urban county in Utah; Davis, Summit, and Utah counties are relatively dense as well). This graph implies that the more dense a county is, the higher on average its support is for Evan McMullin -- urban voters are more likely to support McMullin over Lee than rural voters are.
