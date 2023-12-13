@@ -89,15 +89,25 @@ In this project, my explanatory variable is Utah counties’ population densitie
 ![Population Density of Utah Counties (Map). This map shows population density in people per square km., but is still useful in comparing density between counties.](UT_Pop_Map.png)
 
 ```{r}
-# Create a bar chart of population density by county
-ggplot(population_density, aes(x = reorder(county_name, -density), y = density)) +
+library(stringr)
+
+# Convert county names to title case, re-factor, update color_index
+population_density$county_name <- str_to_title(population_density$county_name)
+population_density$county_name <- factor(population_density$county_name, levels = population_density$county_name[order(population_density$density, decreasing = TRUE)])
+population_density$color_index <- as.numeric(population_density$county_name)
+
+# Chart population density by county
+ggplot(population_density, aes(x = county_name, y = density, fill = color_index)) +
   geom_bar(stat = "identity") +
   scale_y_log10() +
+  scale_fill_gradientn(colors = rainbow(n = length(unique(population_density$county_name)))) + # Custom gradient color scale
   theme_minimal() +
   labs(title = "Population Density by County in Utah",
        x = "County",
-       y = "Pop. Density (per sq. mile, log scale)") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+       y = "Population Density (per sq. mile, log scale)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.title = element_blank(),
+        legend.position = "none")
 ```
 
 ### Outcome Variable
@@ -105,13 +115,17 @@ ggplot(population_density, aes(x = reorder(county_name, -density), y = density))
 My outcome variable is Utah counties’ support for Evan McMullin in the 2022 election (measured as the % of each county’s votes that were cast for McMullin, out of each county’s aggregate total # of votes for both Lee and McMullin).
 
 ```{r}
-# Graphing votes for Mike Lee and Evan McMullin by county
+# Convert county/candidate names to title case
+lee_mcmullin$county_name <- str_to_title(lee_mcmullin$county_name)
+lee_mcmullin$candidate <- str_to_title(lee_mcmullin$candidate)
+
+# Graphing votes for Lee and McMullin
 ggplot(lee_mcmullin, aes(x = county_name, y = candidatevotes, fill = candidate)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_y_log10() +
-  scale_fill_manual(values = c("MIKE LEE" = "lightcoral", "EVAN MCMULLIN" = "gold")) +
+  scale_fill_manual(values = c("Mike Lee" = "firebrick", "Evan Mcmullin" = "steelblue")) +
   theme_minimal() +
-  labs(title = "Votes by County for Mike Lee and Evan McMullin",
+  labs(title = "Votes by UT County for Lee and McMullin",
        x = "County",
        y = "Number of Votes (log scale)",
        fill = "Candidate") +
@@ -122,22 +136,28 @@ ggplot(lee_mcmullin, aes(x = county_name, y = candidatevotes, fill = candidate))
 ```{r}
 ## % OF VOTES FOR MCMULLIN BY COUNTY
 
-# Filter data for Evan McMullin
+# Filter to McMullin
 mcmullin_data <- percentage_votes_with_density |>
   filter(candidate == "EVAN MCMULLIN")
 
-# Graph for Evan McMullin votes by county
+# Convert county/candidate names to title case
+mcmullin_data$county_name <- str_to_title(mcmullin_data$county_name)
+
+# Graph for Evan McMullin votes by county with updated text
 ggplot(mcmullin_data, aes(x = reorder(county_name, density), y = percentage, fill = candidate)) +
   geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(values = c("EVAN MCMULLIN" = "gold")) +
+  scale_fill_manual(values = c("EVAN MCMULLIN" = "steelblue")) +
   theme_minimal() +
-  labs(title = "% of Votes for Evan McMullin, By UT County",
-       x = "County (Ordered by Pop. Density, Lowest to Highest)",
+  labs(title = "% of Votes for McMullin, by UT County",
+       x = "County (Ordered by Population Density, Lowest to Highest)",
        y = "Percentage of Votes") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "none")
 ```
 I seek to assess the correlation between these two variables and analyze whether population density can be used as a predictor for support for McMullin. My research design is observational, correlational analysis—I do not seek to make any claims about causation.
 
+## Results
+
+### Final Plot
 ```{r}
 ## POP DENSITY V MCMULLIN VOTES SCATTERPLOT
 
@@ -147,13 +167,54 @@ ggplot(mcmullin_data, aes(x = density, y = percentage)) +
   geom_smooth(method = "lm", se = TRUE, color = "blue") +
   scale_x_log10() +
   theme_minimal() +
-  labs(title = "% of Votes for Evan McMullin by Population Density",
+  labs(title = "% of Votes for McMullin by Pop. Density",
        x = "Population Density (Log scale)",
        y = "Percentage of Votes",
        color = "County") + # Legend title for counties
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+I used a scatterplot to visualize the relationship between Utah counties’ population densities and their percentage support for McMullin in the 2022 election. I imposed a regression line and confidence interval over this scatterplot. The plot supports my hypothesis that there is a positive relationship between Utah counties’ population densities and their support for McMullin. Its regression line shows a relatively pronounced positive correlation between the two variables.
 
+### Regression
+```{r}
+## REGRESSION
+
+library(broom)
+library(modelsummary)
+
+# Run the linear regression model
+mcmullin_lm <- lm(percentage ~ log(density), data = mcmullin_data)
+
+# Summary of the model
+summary_mcmullin_lm <- summary(mcmullin_lm)
+print(summary_mcmullin_lm)
+
+# Create a table of results
+var_labels <- c(
+  "(Intercept)" = "Intercept",
+  "log(density)" = "Pop. Density (Log)")
+
+modelsummary::modelsummary(
+  mcmullin_lm,
+  statistic = c("s.e. = {std.error}", "p = {p.value}"),
+  coef_map = var_labels,
+  gof_map = c("nobs", "r.squared", "adj.r.squared"))
+
+```
+
+To further assess the significance of this relationship, I ran a regression (results displayed in the table above).
+
+The coefficient for the intercept, 19.867, is the expected value of the outcome variable (% of votes for McMullin when the explanatory variable (population density) is equal to 1 person/sq. mile. This intercept has a standard error of 3.498, and a very small p-value (less than 0.001). Because this p-value is less than 0.05, we can reject the null hypothesis that the intercept is zero, and be very confident that there will likely be at least some support for McMullin even in Utah counties with very low population density.
+
+The coefficient for population density (4.006) indicates that for each 1-unit increase in the log of population density, we can expect a county’s % of votes for McMullin to increase by about 4.006 percentage points. This coefficient has a standard error of 1.148 and a p-value of 0.002. Because this p-value is less than 0.05m we can reject the null hypothesis that there is no correlation between population density and % support for McMullin.
+
+In sum, this graph and regression indicate that there is a statistically significant, positive correlation between the population density of a Utah county (seen here in log form) and the percentage of votes that McMullin received in that county.
+
+Though there is a correlation between these two variables, we cannot assume causation. There could be many confounding variables (for example, more densely populated counties may have more places to vote, campaigning may not have been evenly distributed across the state, or these statistics could have been skewed by the fact that Democrats are both 1) more likely to live in densely populated areas, and 2) more likely to support McMullin). While this analysis establishes a correlation, we do not have enough data to speculate about a causal relationship between these two variables.
+
+## Conclusion
+
+## Sources
 
 ```
 
