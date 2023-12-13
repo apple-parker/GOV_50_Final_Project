@@ -6,7 +6,6 @@ output:
   distill::distill_article:
     self_contained: false
 ---
-
 ## Project thoughts
 
 I am interested in election analytics and data journalism. Last fall, I took a journalism class where I reported on Utah's 2022 Senate race. I think it would be interesting to analyze this same election using the quantitative data analysis methods we are learning in GOV 50. I'd like to see what new insights I gain when approaching this election from a quantitative vs. a qualitative point of view.
@@ -93,3 +92,95 @@ ggplot(lee_mcmullin_percent, aes(x = reorder(county_name, -percent_mcmullin), y 
 This graph shows support for Mike Lee and Evan McMullin in each Utah county. Unlike the last graph, I've ranked the counties in this graph by their % support for Evan McMullin. The counties that support McMullin the most are on the left, and those that support Lee the most are on the right. I am planning on using this graph as my baseline for independent (McMullin) and Republican (Lee) support in Utah by county, which I will compare to the results of down-ballot elections in each county.
 
 The counties to the left of this plot tend to be more urban, while the counties to the right of this plot tend to be less urban (for example, Salt Lake County is #2 on the chart and is the most urban county in Utah; Davis, Summit, and Utah counties are relatively dense as well). This graph implies that the more dense a county is, the higher on average its support is for Evan McMullin -- urban voters are more likely to support McMullin over Lee than rural voters are.
+
+```{r}
+## PRELIMINARY DATA WORK
+
+# Load packages
+library(tidyverse)
+library(dplyr)
+
+# Load CSV
+senate_data <- read_csv("senate_2022.csv")
+
+# Filter the data for Utah
+utah_data <- senate_data |>
+  filter(state_po == "UT")
+
+# Create a dataset that only shows votes for Lee and McMullin
+lee_mcmullin <- utah_data |>
+  filter(candidate == "EVAN MCMULLIN" | candidate == "MIKE LEE")
+
+# Create a data frame with population density information
+population_density <- tibble(
+  county_name = c("SALT LAKE", "DAVIS", "WEBER", "UTAH", "CACHE", 
+                  "WASHINGTON", "WASATCH", "SUMMIT", "SANPETE", "MORGAN", 
+                  "CARBON", "IRON", "SEVIER", "TOOELE", "UINTAH", "BOX ELDER",
+                  "DUCHESNE", "JUAB", "GRAND", "BEAVER", "PIUTE", "EMERY",
+                  "RICH", "SAN JUAN", "MILLARD", "KANE", "WAYNE", "DAGGETT", "GARFIELD"),
+  density = c(1317.5, 501.0, 358.4, 252.1, 98.9, 59.6, 21.2, 20.1, 17.6, 16.3,
+              14.2, 14.2, 10.8, 8.2, 7.7, 7.5, 6.0, 3.0, 2.5, 2.5, 2.5, 2.4, 
+              2.1, 1.9, 1.8, 1.8, 1.1, 1.0, 1.0))
+
+# Join the population density data with the original dataset
+lee_mcmullin_density <- lee_mcmullin |>
+  inner_join(population_density, by = "county_name")
+
+# Summarize total votes by county and candidate
+votes_by_candidate <- lee_mcmullin |>
+  group_by(county_name, candidate) |>
+  summarize(total_votes = sum(candidatevotes))
+
+# Calculate total votes by county
+total_votes_by_county <- votes_by_candidate |>
+  group_by(county_name) |>
+  summarize(total_votes_county = sum(total_votes))
+
+# Join the data back and calculate percentage
+percentage_votes <- votes_by_candidate |>
+  inner_join(total_votes_by_county, by = "county_name") |>
+  mutate(percentage = (total_votes / total_votes_county) * 100)
+
+# Troubleshooting - join population_density with percentage_votes
+percentage_votes_with_density <- percentage_votes |>
+  left_join(population_density, by = "county_name")
+```
+
+```{r}
+## % OF VOTES FOR MCMULLIN BY COUNTY
+
+# Filter data for Evan McMullin
+mcmullin_data <- percentage_votes_with_density |>
+  filter(candidate == "EVAN MCMULLIN")
+
+# Graph for Evan McMullin votes by county
+ggplot(mcmullin_data, aes(x = reorder(county_name, density), y = percentage, fill = candidate)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = c("EVAN MCMULLIN" = "gold")) +
+  theme_minimal() +
+  labs(title = "% of Votes for Evan McMullin, By UT County",
+       x = "County (Ordered by Pop. Density, Lowest to Highest)",
+       y = "Percentage of Votes") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+```{r}
+## POP DENSITY V MCMULLIN VOTES SCATTERPLOT
+
+# Create a scatter plot with a logarithmic x-axis and a confidence interval for the line of best fit
+ggplot(mcmullin_data, aes(x = density, y = percentage)) +
+  geom_point(aes(color = county_name), size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "blue") +
+  scale_x_log10() +
+  theme_minimal() +
+  labs(title = "% of Votes for Evan McMullin by Population Density",
+       x = "Population Density (Log scale)",
+       y = "Percentage of Votes",
+       color = "County") + # Legend title for counties
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+```
+
