@@ -26,6 +26,8 @@ Because McMullin drew support from across party lines, it is hard to predict sup
 
 ## Data
 
+### Datasets
+
 This project relies on two datasets, one showing 2022 Senate election results and one showing Utah counties’ population densities. My election results dataset is drawn from the MIT Elections Lab. Their dataset initially displayed all 2022 Senate votes by county for each U.S. state, but I filtered the dataset down to only Utah counties, then filtered the candidates down to only McMullin and Lee (so excluding write-ins and other fringe candidates). I also created a tibble called `percentage_votes` that shows what percent of the total Lee/McMullun votes by county went to Lee, and what percent went to McMullin. My population density dataset is drawn from USA.com, which sources its data from the 2020 U.S. Census. I added this data into my election results dataset by creating a new tibble called `population_density.`
 
 ```{r}
@@ -80,9 +82,13 @@ percentage_votes <- votes_by_candidate |>
 percentage_votes_with_density <- percentage_votes |>
   left_join(population_density, by = "county_name")
 ```
+### Explanatory Variable
+
 In this project, my explanatory variable is Utah counties’ population densities (measured in people per sq. mile).
 
 ![Population Density of Utah Counties (Map)](UT_Pop_Map.png)
+
+### Outcome Variable
 
 My outcome variable is those counties’ support for Evan McMullin in the 2022 election (measured as the % of each county’s votes that were cast for McMullin, out of each county’s aggregate total # of votes for both Lee and McMullin).
 
@@ -102,7 +108,7 @@ ggplot(lee_mcmullin, aes(x = county_name, y = candidatevotes, fill = candidate))
 
 
 ```{r}
-## VARIABLES OF INTEREST - POPULATION DENSITY, % OF VOTES FOR MCMULLIN BY COUNTY
+## % OF VOTES FOR MCMULLIN BY COUNTY
 
 # Filter data for Evan McMullin
 mcmullin_data <- percentage_votes_with_density |>
@@ -119,23 +125,6 @@ ggplot(mcmullin_data, aes(x = reorder(county_name, density), y = percentage, fil
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 I seek to assess the correlation between these two variables and analyze whether population density can be used as a predictor for support for McMullin. My research design is observational, correlational analysis—I do not seek to make any claims about causation.
-
-```{r}
-# Filter data for Evan McMullin
-mcmullin_data <- percentage_votes_with_density |>
-  filter(candidate == "EVAN MCMULLIN")
-
-# Graph for Evan McMullin votes by county
-ggplot(mcmullin_data, aes(x = reorder(county_name, density), y = percentage, fill = candidate)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(values = c("EVAN MCMULLIN" = "gold")) +
-  theme_minimal() +
-  labs(title = "% of Votes for Evan McMullin, By UT County",
-       x = "County (Ordered by Pop. Density, Lowest to Highest)",
-       y = "Percentage of Votes") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
 
 ```{r}
 ## POP DENSITY V MCMULLIN VOTES SCATTERPLOT
