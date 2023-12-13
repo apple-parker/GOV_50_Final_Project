@@ -206,7 +206,7 @@ To further assess the significance of this relationship, I ran a regression (res
 
 The coefficient for the intercept, 19.867, is the expected value of the outcome variable (% of votes for McMullin when the explanatory variable (population density) is equal to 1 person/sq. mile. This intercept has a standard error of 3.498, and a very small p-value (less than 0.001). Because this p-value is less than 0.05, we can reject the null hypothesis that the intercept is zero, and be very confident that there will likely be at least some support for McMullin even in Utah counties with very low population density.
 
-The coefficient for population density (4.006) indicates that for each 1-unit increase in the log of population density, we can expect a county’s % of votes for McMullin to increase by about 4.006 percentage points. This coefficient has a standard error of 1.148 and a p-value of 0.002. Because this p-value is less than 0.05m we can reject the null hypothesis that there is no correlation between population density and % support for McMullin.
+The coefficient for population density (4.006) indicates that for each 1-unit increase in the log of population density, we can expect a county’s % of votes for McMullin to increase by about 4.006 percentage points. This coefficient has a standard error of 1.148 and a p-value of 0.002. Because this p-value is less than 0.05, we can reject the null hypothesis that there is no correlation between population density and % support for McMullin.
 
 In sum, this graph and regression indicate that there is a statistically significant, positive correlation between the population density of a Utah county (seen here in log form) and the percentage of votes that McMullin received in that county.
 
@@ -214,7 +214,24 @@ Though there is a correlation between these two variables, we cannot assume caus
 
 ## Conclusion
 
+There appears to be a moderate positive relationship between a Utah county’s population density and that county’s percentage support for Evan McMullin in Utah’s 2022 Senate race. This relationship appears statistically significant, affirming my hypothesis.
+
+This analysis is limited because it does not look at the scope of all votes, just those for Lee and McMullin. It would have been difficult for me to plot and analyze election data if all write-ins and non-McMullin third-party votes were included, so I simplified the dataset to just include votes for Lee and McMullin. However, this leaves out some of the election results. Right now, votes that did not go to McMullin are assumed to have gone to Lee, when in fact some of them may have gone to more fringe candidates. If I had more time, I would factor in write-in and non-McMullin third-party votes to my analysis (perhaps by creating a third category, to encompass all non-Lee or McMullin votes).
+
+
+Additionally, the observed positive relationship between population density and support for McMullin may be confounded by factors such as the proportional presence of Democratic voters in a county, or by the number of nearby voting stations (though Utah has some of the best mail-in voting in the U.S., so this may be less of a confounder here than in other states). If I were to perform this analysis again, I would look for ways to factor in data on party affiliation and access to voting in order to clear out confounding noise that may be affecting my relationship of interest.
+
 ## Sources
 
+Everett, Burgess. “Welcome to the Strangest Senate Race in America.” POLITICO, 8 Aug. 2022, www.politico.com/news/2022/08/08/utah-strangest-senate-race-in-america-00050090. 
+
+MIT Election Data and Science Lab. “U.S. Senate County-Level Results 2022.” Harvard Dataverse, Harvard Dataverse, 20 Sept. 2023, dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FYB60EJ. 
+
+Stern, Emily Anderson. “Utah Sen. Mike Lee Wins Reelection, Beating Independent Challenger Evan McMullin in Unprecedented Senate Race.” The Salt Lake Tribune, The Salt Lake Tribune, 9 Nov. 2022, www.sltrib.com/news/politics/2022/11/08/incumbent-mike-lee-pulls-ahead/. 
+
+USA.com. “Utah Population Density County Rank.” USA.Com, 2022, www.usa.com/rank/utah-state--population-density--county-rank.htm. 
+“Utah Population Density.” Wikimedia Commons, Wikimedia Commons, 2020, commons.wikimedia.org/wiki/File:Population_density.png. 
+
+“Utah U.S. Senate Election Results.” The New York Times, The New York Times, 8 Nov. 2022, www.nytimes.com/interactive/2022/11/08/us/elections/results-utah-us-senate.html. 
 ```
 
