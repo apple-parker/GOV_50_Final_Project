@@ -28,7 +28,7 @@ Because McMullin drew support from across party lines, it is hard to predict sup
 
 ### Datasets
 
-This project relies on two datasets, one showing 2022 Senate election results and one showing Utah counties’ population densities. My election results dataset is drawn from the MIT Elections Lab. Their dataset initially displayed all 2022 Senate votes by county for each U.S. state, but I filtered the dataset down to only Utah counties, then filtered the candidates down to only McMullin and Lee (so excluding write-ins and other fringe candidates). I also created a tibble called `percentage_votes` that shows what percent of the total Lee/McMullun votes by county went to Lee, and what percent went to McMullin. My population density dataset is drawn from USA.com, which sources its data from the 2020 U.S. Census. I added this data into my election results dataset by creating a new tibble called `population_density.`
+This project relies on two datasets, one showing 2022 Senate election results and one showing Utah counties’ population densities. My election results dataset is drawn from the MIT Elections Lab. Their dataset initially displayed all 2022 Senate votes by county for each U.S. state, but I filtered the dataset down to only Utah counties, then filtered the candidates down to only McMullin and Lee (so excluding write-ins and other fringe candidates). I also created a tibble called `percentage_votes` that shows what percent of the total Lee/McMullin votes by county went to Lee, and what percent went to McMullin. My population density dataset is drawn from USA.com, which sources its data from the 2020 U.S. Census. I added this data into my election results dataset by creating a new tibble called `population_density.`
 
 ```{r}
 ## PRELIMINARY DATA WORK
@@ -86,11 +86,23 @@ percentage_votes_with_density <- percentage_votes |>
 
 In this project, my explanatory variable is Utah counties’ population densities (measured in people per sq. mile).
 
-![Population Density of Utah Counties (Map)](UT_Pop_Map.png)
+![Population Density of Utah Counties (Map). This map shows population density in people per square km., but is still useful in comparing density between counties.](UT_Pop_Map.png)
+
+```{r}
+# Create a bar chart of population density by county
+ggplot(population_density, aes(x = reorder(county_name, -density), y = density)) +
+  geom_bar(stat = "identity") +
+  scale_y_log10() +
+  theme_minimal() +
+  labs(title = "Population Density by County in Utah",
+       x = "County",
+       y = "Pop. Density (per sq. mile, log scale)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
 ### Outcome Variable
 
-My outcome variable is those counties’ support for Evan McMullin in the 2022 election (measured as the % of each county’s votes that were cast for McMullin, out of each county’s aggregate total # of votes for both Lee and McMullin).
+My outcome variable is Utah counties’ support for Evan McMullin in the 2022 election (measured as the % of each county’s votes that were cast for McMullin, out of each county’s aggregate total # of votes for both Lee and McMullin).
 
 ```{r}
 # Graphing votes for Mike Lee and Evan McMullin by county

@@ -1461,7 +1461,7 @@
 <p>Because McMullin drew support from across party lines, it is hard to predict support for him based solely on partisan data. Looking at population density instead could help provide a more nuanced view of where candidates like McMullin are likely to find support—not only from strict Democrats or Republicans, but also from independents or conventional party members with uncommon leanings. Party coalitions in states like Alaska are already looking at applying McMullin’s strategy (fielding an independent instead of a major-party candidate) in future elections. Analyzing where people like McMullin draw their support from will be important when assessing whether this strategy will be electorally viable in the future, and will be vital to geographic allocations of ad money and campaign events if others do decide to emulate McMullin.</p>
 <h2 id="data">Data</h2>
 <h3 id="datasets">Datasets</h3>
-<p>This project relies on two datasets, one showing 2022 Senate election results and one showing Utah counties’ population densities. My election results dataset is drawn from the MIT Elections Lab. Their dataset initially displayed all 2022 Senate votes by county for each U.S. state, but I filtered the dataset down to only Utah counties, then filtered the candidates down to only McMullin and Lee (so excluding write-ins and other fringe candidates). I also created a tibble called <code>percentage_votes</code> that shows what percent of the total Lee/McMullun votes by county went to Lee, and what percent went to McMullin. My population density dataset is drawn from USA.com, which sources its data from the 2020 U.S. Census. I added this data into my election results dataset by creating a new tibble called <code>population_density.</code></p>
+<p>This project relies on two datasets, one showing 2022 Senate election results and one showing Utah counties’ population densities. My election results dataset is drawn from the MIT Elections Lab. Their dataset initially displayed all 2022 Senate votes by county for each U.S. state, but I filtered the dataset down to only Utah counties, then filtered the candidates down to only McMullin and Lee (so excluding write-ins and other fringe candidates). I also created a tibble called <code>percentage_votes</code> that shows what percent of the total Lee/McMullin votes by county went to Lee, and what percent went to McMullin. My population density dataset is drawn from USA.com, which sources its data from the 2020 U.S. Census. I added this data into my election results dataset by creating a new tibble called <code>population_density.</code></p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>## PRELIMINARY DATA WORK</span></span>
@@ -1519,11 +1519,25 @@
 <h3 id="explanatory-variable">Explanatory Variable</h3>
 <p>In this project, my explanatory variable is Utah counties’ population densities (measured in people per sq. mile).</p>
 <figure>
-<img src="UT_Pop_Map.png" alt="Population Density of Utah Counties (Map)" />
-<figcaption aria-hidden="true">Population Density of Utah Counties (Map)</figcaption>
+<img src="UT_Pop_Map.png" alt="Population Density of Utah Counties (Map). This map shows population density in people per square km., but is still useful in comparing density between counties." />
+<figcaption aria-hidden="true">Population Density of Utah Counties (Map). This map shows population density in people per square km., but is still useful in comparing density between counties.</figcaption>
 </figure>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'># Create a bar chart of population density by county</span></span>
+<span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>population_density</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/reorder.factor.html'>reorder</a></span><span class='op'>(</span><span class='va'>county_name</span>, <span class='op'>-</span><span class='va'>density</span><span class='op'>)</span>, y <span class='op'>=</span> <span class='va'>density</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_bar.html'>geom_bar</a></span><span class='op'>(</span>stat <span class='op'>=</span> <span class='st'>"identity"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_log10</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_minimal</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Population Density by County in Utah"</span>,</span>
+<span>       x <span class='op'>=</span> <span class='st'>"County"</span>,</span>
+<span>       y <span class='op'>=</span> <span class='st'>"Pop. Density (per sq. mile, log scale)"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>axis.text.x <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_text</a></span><span class='op'>(</span>angle <span class='op'>=</span> <span class='fl'>45</span>, hjust <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
+</div>
+<p><img src="index_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+</div>
 <h3 id="outcome-variable">Outcome Variable</h3>
-<p>My outcome variable is those counties’ support for Evan McMullin in the 2022 election (measured as the % of each county’s votes that were cast for McMullin, out of each county’s aggregate total # of votes for both Lee and McMullin).</p>
+<p>My outcome variable is Utah counties’ support for Evan McMullin in the 2022 election (measured as the % of each county’s votes that were cast for McMullin, out of each county’s aggregate total # of votes for both Lee and McMullin).</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'># Graphing votes for Mike Lee and Evan McMullin by county</span></span>
@@ -1538,7 +1552,7 @@
 <span>       fill <span class='op'>=</span> <span class='st'>"Candidate"</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>axis.text.x <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_text</a></span><span class='op'>(</span>angle <span class='op'>=</span> <span class='fl'>45</span>, hjust <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
 </div>
-<p><img src="index_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+<p><img src="index_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1558,7 +1572,7 @@
 <span>       y <span class='op'>=</span> <span class='st'>"Percentage of Votes"</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>axis.text.x <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_text</a></span><span class='op'>(</span>angle <span class='op'>=</span> <span class='fl'>45</span>, hjust <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
 </div>
-<p><img src="index_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
+<p><img src="index_files/figure-html5/unnamed-chunk-4-1.png" width="624" /></p>
 </div>
 <p>I seek to assess the correlation between these two variables and analyze whether population density can be used as a predictor for support for McMullin. My research design is observational, correlational analysis—I do not seek to make any claims about causation.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1577,7 +1591,7 @@
 <span>       color <span class='op'>=</span> <span class='st'>"County"</span><span class='op'>)</span> <span class='op'>+</span> <span class='co'># Legend title for counties</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a></span><span class='op'>(</span>axis.text.x <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/element.html'>element_text</a></span><span class='op'>(</span>angle <span class='op'>=</span> <span class='fl'>45</span>, hjust <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
 </div>
-<p><img src="index_files/figure-html5/unnamed-chunk-4-1.png" width="624" /></p>
+<p><img src="index_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
 </div>
 <pre><code>
 ```{.r .distill-force-highlighting-css}</code></pre>
