@@ -100,7 +100,7 @@ population_density$color_index <- as.numeric(population_density$county_name)
 ggplot(population_density, aes(x = county_name, y = density, fill = color_index)) +
   geom_bar(stat = "identity") +
   scale_y_log10() +
-  scale_fill_gradientn(colors = rainbow(n = length(unique(population_density$county_name)))) + # Custom gradient color scale
+  scale_fill_gradientn(colors = rainbow(n = length(unique(population_density$county_name)))) +
   theme_minimal() +
   labs(title = "Population Density by County in Utah",
        x = "County",
@@ -161,7 +161,7 @@ I seek to assess the correlation between these two variables and analyze whether
 ```{r}
 ## POP DENSITY V MCMULLIN VOTES SCATTERPLOT
 
-# Create a scatter plot with a logarithmic x-axis and a confidence interval for the line of best fit
+# Create a scatter plot
 ggplot(mcmullin_data, aes(x = density, y = percentage)) +
   geom_point(aes(color = county_name), size = 3) +
   geom_smooth(method = "lm", se = TRUE, color = "blue") +
@@ -170,7 +170,7 @@ ggplot(mcmullin_data, aes(x = density, y = percentage)) +
   labs(title = "% of Votes for McMullin by Pop. Density",
        x = "Population Density (Log scale)",
        y = "Percentage of Votes",
-       color = "County") + # Legend title for counties
+       color = "County") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 I used a scatterplot to visualize the relationship between Utah counties’ population densities and their percentage support for McMullin in the 2022 election. I imposed a regression line and confidence interval over this scatterplot. The plot supports my hypothesis that there is a positive relationship between Utah counties’ population densities and their support for McMullin. Its regression line shows a relatively pronounced positive correlation between the two variables.
