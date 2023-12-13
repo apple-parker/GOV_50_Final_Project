@@ -87,13 +87,13 @@ In this project, my explanatory variable is Utah counties’ population densitie
 My outcome variable is those counties’ support for Evan McMullin in the 2022 election (measured as the % of each county’s votes that were cast for McMullin, out of each county’s aggregate total # of votes for both Lee and McMullin).
 
 ```{r}
-# Graphing votes for Mike Lee and Evan McMullin by county, ordered by McMullin's vote percentage
-ggplot(lee_mcmullin_percent, aes(x = reorder(county_name, -percent_mcmullin), y = candidatevotes, fill = candidate)) +
+# Graphing votes for Mike Lee and Evan McMullin by county
+ggplot(lee_mcmullin, aes(x = county_name, y = candidatevotes, fill = candidate)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_y_log10() +
   scale_fill_manual(values = c("MIKE LEE" = "lightcoral", "EVAN MCMULLIN" = "gold")) +
   theme_minimal() +
-  labs(title = "UT County for Lee and McMullin (Ordered by McMullin's Support)",
+  labs(title = "Votes by County for Mike Lee and Evan McMullin",
        x = "County",
        y = "Number of Votes (log scale)",
        fill = "Candidate") +
